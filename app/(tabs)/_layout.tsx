@@ -1,45 +1,90 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
-
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
+import { Platform, TouchableOpacity, Text, View } from 'react-native';
+import { DarkTheme, DefaultTheme, ThemeProvider, NavigationContainer, useNavigation } from '@react-navigation/native';
+import LoginScreen from './login';
+import RegisterScreen from './register';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
+    // <Tabs screenOptions={{ tabBarStyle: { display: 'none' } }}>
+    <Tabs>
       <Tabs.Screen
+        name="login"
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Tabs.Screen
+        name="register"
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Tabs.Screen
+        name="tnc"
+        options={({ navigation }) => ({
+          title: "",
+          headerShown: true,
+          headerLeft: () => (
+            <View style={{ flexDirection: "row", alignItems: "center", marginLeft: 15 }}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("register")}
+                style={{ flexDirection: "row", alignItems: "center" }}>
+                <Ionicons name="arrow-back" size={24} color="black" />
+              </TouchableOpacity>
+
+              <Text style={{ fontSize: 16, marginLeft: 10, fontWeight: "bold" }}>
+                Terms and Conditions
+              </Text>
+            </View>
+          ),
+        })}
+      />
+
+
+      {/* <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
+          headerShown: true,
+        }}  
+      /> */}
+
       <Tabs.Screen
-        name="explore"
+        name="topup"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: "",
+          headerShown: true,
+          headerLeft: () => (
+            <View style={{ marginLeft: 15 }}>
+              <Text style={{ fontSize: 16, fontWeight: "bold" }}>Top Up</Text>
+            </View>
+          ),
         }}
-      />
+      />;
+
+      <Tabs.Screen
+        name="transfer"
+        options={{
+          title: "",
+          headerShown: true,
+          headerLeft: () => (
+            <View style={{ marginLeft: 15 }}>
+              <Text style={{ fontSize: 16, fontWeight: "bold" }}>Transfer</Text>
+            </View>
+          ),
+        }}
+      />;
+
     </Tabs>
   );
 }
