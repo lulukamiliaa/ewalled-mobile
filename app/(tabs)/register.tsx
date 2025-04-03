@@ -1,44 +1,110 @@
 import React, { useState } from 'react';
-import { Image, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { 
+    Image, 
+    View, 
+    Text, 
+    TextInput, 
+    TouchableOpacity, 
+    StyleSheet, 
+    KeyboardAvoidingView, 
+    ScrollView, 
+    Platform, 
+    Alert 
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Checkbox } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';  // Import AsyncStorage
 
-export default function LoginScreen() {
-    const navigation = useNavigation(); 
+export default function RegisterScreen() {
+    const navigation = useNavigation();
     const [isChecked, setIsChecked] = useState(false);
+    const [fullname, setFullname] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [avatar, setAvatar] = useState('');
+
+    const handleRegister = async () => {
+        if (!fullname || !email || !password) {
+            Alert.alert("Error", "Please fill in all required fields.");
+            return;
+        }
+
+        if (!isChecked) {
+            Alert.alert("Error", "You must agree to the Terms and Conditions.");
+            return;
+        }
+
+        // Save user data to AsyncStorage
+        try {
+            await AsyncStorage.setItem('userFullname', fullname);
+            await AsyncStorage.setItem('userEmail', email);
+            await AsyncStorage.setItem('userPassword', password);
+            await AsyncStorage.setItem('userAvatar', avatar);
+
+            // Simulate API request (you can replace this with an actual API call)
+            setTimeout(() => {
+                Alert.alert("Success", "Registration successful!", [
+                    {
+                        text: "OK",
+                        onPress: () => navigation.navigate('login'),
+                    }
+                ]);
+            }, 1000);
+        } catch (error) {
+            console.error("Error saving data to AsyncStorage", error);
+            Alert.alert("Error", "There was an issue saving your information.");
+        }
+    };
 
     return (
-        <View style={styles.container}>
-            <Image 
-            source={require('@/assets/images/logo.png')}
-            style={styles.logo}
-            />
-            <View style={styles.card}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Fullname"
-                    placeholderTextColor="#333"
+        <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+            style={styles.container}
+        >
+            <ScrollView 
+                contentContainerStyle={styles.scrollContainer} 
+                keyboardShouldPersistTaps="handled"
+            >
+                {/* Logo */}
+                <Image 
+                    source={require('@/assets/images/logo.png')}
+                    style={styles.logo}
                 />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    placeholderTextColor="#333"
-                    keyboardType="email-address"
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Password"
-                    placeholderTextColor="#333"
-                    secureTextEntry
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Avatar Url"
-                    placeholderTextColor="#333"
-                />
-            </View>
-        
-            <View style={styles.buttoncard}>
+
+                {/* Input Fields */}
+                <View style={styles.card}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Fullname"
+                        placeholderTextColor="#333"
+                        value={fullname}
+                        onChangeText={setFullname}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Email"
+                        placeholderTextColor="#333"
+                        keyboardType="email-address"
+                        value={email}
+                        onChangeText={setEmail}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Password"
+                        placeholderTextColor="#333"
+                        secureTextEntry
+                        value={password}
+                        onChangeText={setPassword}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Avatar URL"
+                        placeholderTextColor="#333"
+                        value={avatar}
+                        onChangeText={setAvatar}
+                    />
+                </View>
+
                 {/* Checkbox for Terms & Conditions */}
                 <View style={styles.checkboxContainer}>
                     <Checkbox 
@@ -51,78 +117,72 @@ export default function LoginScreen() {
                         </Text>
                     </TouchableOpacity>
                 </View>
-                
 
-                <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText}>Register</Text>
-                </TouchableOpacity>
+                {/* Register Button */}
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={styles.button} onPress={handleRegister}>
+                        <Text style={styles.buttonText}>Register</Text>
+                    </TouchableOpacity>
 
-                <TouchableOpacity 
-                    style={{ alignSelf: 'flex-start', marginTop: 15, marginLeft: 15 }}
-                    onPress={() => navigation.navigate('login')}
-                >
-                    <Text style={styles.registerText}>
-                        Have an account?
-                        <Text style={styles.registerLink}> Login here</Text>
-                    </Text>
-                </TouchableOpacity>
-                
-            </View>
-        </View>
+                    <TouchableOpacity 
+                        style={styles.registerContainer}
+                        onPress={() => navigation.navigate('login')}
+                    >
+                        <Text style={styles.registerText}>
+                            Have an account?
+                            <Text style={styles.registerLink}> Login here</Text>
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        backgroundColor: '#fff',
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: 'white',
+        paddingVertical: 50,
+        paddingHorizontal: 22,
     },
     logo: {
         width: 233,
         height: 57,
-        marginBottom: 30,
-        position: 'absolute',
-        top: '15%',
+        alignSelf: 'center',
+        marginTop: 40,
+        marginBottom: 60,
     },
     card: {
         width: '100%',
-        margin: 20,
-        backgroundColor: 'white',
         alignItems: 'center',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 20,
-        fontFamily: 'OpenSans-Regular',
     },
     input: {
         width: 339,
-        height: 50,
-        padding: 10,
-        marginBottom: 20,
-        borderWidth: 1,
-        borderColor: '#ccc',
+        height: 60,
+        paddingHorizontal: 10,
+        backgroundColor: '#fff',
         borderRadius: 10,
-        fontFamily: 'OpenSans-Regular',
         fontSize: 16,
         fontWeight: 'bold',
-    },
-    buttoncard: {
-        position: 'absolute',
-        alignItems: 'center',
-        width: '100%',
-        bottom: 80,
-        borderRadius: 10,
-        fontFamily: 'OpenSans-Regular',
+        fontFamily: 'Open Sans',
+        lineHeight: 60, 
+        letterSpacing: 0,
+        color: '#333',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        marginBottom: 20,
     },
     checkboxContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 15
+        marginBottom: 20,
+        width: '100%',
     },
     termsText: {
         fontSize: 14,
@@ -138,28 +198,33 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: 'bold',
     },
+    buttonContainer: {
+        width: '100%',
+        alignItems: 'center',
+        marginBottom: 30,
+    },
     button: {
-        backgroundColor: '#007BFF',
+        backgroundColor: '#0066FF',
         width: 339,
         height: 50,
-        padding: 10,
-        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        fontFamily: 'OpenSans-Regular',
+        borderRadius: 10,
+        marginBottom: 10,
     },
     buttonText: {
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
-        fontFamily: 'OpenSans-Regular',
+    },
+    registerContainer: {
+        alignSelf: 'flex-start',
     },
     registerText: {
         fontSize: 16,
         color: '#333',
-        paddingLeft: 10
     },
     registerLink: {
-        color: '#007BFF',
+        color: '#0066FF',
     },
 });
