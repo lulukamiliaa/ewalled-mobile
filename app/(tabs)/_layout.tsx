@@ -5,19 +5,19 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function TabLayout() {
-  const [avatarUrl, setAvatarUrl] = useState(null); // State to store avatar URL
+  const [avatar, setAvatar] = useState(''); // State to store avatar URL
   const [fullName, setFullName] = useState(''); // State to store the full name
 
   useEffect(() => {
     const getUserData = async () => {
       try {
         // Fetch avatar URL and full name from AsyncStorage
-        const avatar = await AsyncStorage.getItem('avatarUrl');
-        const name = await AsyncStorage.getItem('fullName');
+        const avatar = await AsyncStorage.getItem('userAvatar');
+        const fullName = await AsyncStorage.getItem("userFullName");
 
         // Set the avatar URL and full name to state
-        setAvatarUrl(avatar);
-        setFullName(name);
+        setAvatar(avatar);
+        setFullName(fullName);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -84,7 +84,8 @@ export default function TabLayout() {
                 }}
               >
                 <Image
-                  source={avatarUrl ? { uri: avatarUrl } : require('@/assets/images/picture.png')} 
+                  source={avatar ? { uri: avatar } : require('@/assets/images/picture.png')} 
+                  onError={() => setAvatar(null)} // Reset to show default
                   style={{
                     width: 38,
                     height: 38,

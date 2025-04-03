@@ -18,13 +18,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';  // Import
 export default function RegisterScreen() {
     const navigation = useNavigation();
     const [isChecked, setIsChecked] = useState(false);
-    const [fullname, setFullname] = useState('');
+    const [fullName, setFullname] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [avatar, setAvatar] = useState('');
 
     const handleRegister = async () => {
-        if (!fullname || !email || !password) {
+        if (!fullName || !email || !password) {
             Alert.alert("Error", "Please fill in all required fields.");
             return;
         }
@@ -36,7 +36,7 @@ export default function RegisterScreen() {
 
         // Save user data to AsyncStorage
         try {
-            await AsyncStorage.setItem('userFullname', fullname);
+            await AsyncStorage.setItem('userFullName', fullName);
             await AsyncStorage.setItem('userEmail', email);
             await AsyncStorage.setItem('userPassword', password);
             await AsyncStorage.setItem('userAvatar', avatar);
@@ -77,7 +77,7 @@ export default function RegisterScreen() {
                         style={styles.input}
                         placeholder="Fullname"
                         placeholderTextColor="#333"
-                        value={fullname}
+                        value={fullName}
                         onChangeText={setFullname}
                     />
                     <TextInput

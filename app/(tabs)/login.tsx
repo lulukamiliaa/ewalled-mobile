@@ -33,6 +33,8 @@ export default function LoginScreen() {
             // Retrieve stored user data from AsyncStorage
             const storedEmail = await AsyncStorage.getItem('userEmail');
             const storedPassword = await AsyncStorage.getItem('userPassword');
+            const storedFullName = await AsyncStorage.getItem('userFullName');
+            const storedAvatar= await AsyncStorage.getItem('userAvatar');
 
             // Handle missing credentials
             if (!storedEmail || !storedPassword) {

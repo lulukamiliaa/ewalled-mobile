@@ -14,13 +14,14 @@ const formatCurrency = (amount) => {
 
 export default function HomeScreen() {
   const navigation = useNavigation();
-  const [fullName, setFullName] = useState(null); // Initialize as null
+  const [fullName, setFullName] = useState("");
 
   // Fetch user's name from AsyncStorage
   useEffect(() => {
     const getFullName = async () => {
       try {
-        const fullName = await AsyncStorage.getItem("fullName");
+        const fullName = await AsyncStorage.getItem("userFullName");
+
         if (fullName) {
           const firstName = fullName.split(" ")[0];
           setFullName(firstName); // Set only first name
@@ -43,7 +44,7 @@ export default function HomeScreen() {
       <View style={styles.headerContainer}>
         <View style={styles.textContainer}>
           <Text style={styles.greeting}>
-            Good Morning, {fullName ?? "Guest"} {/* Use nullish coalescing */}
+            Good Morning, {fullName ?? "Guest"}
           </Text>
           <Text style={styles.subText}>
             Check all your incoming and outgoing transactions here
